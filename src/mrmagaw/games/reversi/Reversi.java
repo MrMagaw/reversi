@@ -47,6 +47,10 @@ public class Reversi {
 	    players[1].init(false);
 
 	    board = new Board();
+	    if(SHOW_GUI){
+		gui = Gui.init();
+		gui.updateTiles(board, true);
+	    }
 	} catch (InstantiationException | IllegalAccessException ex) {
 	    Logger.getLogger(Reversi.class.getName()).log(Level.SEVERE, null, ex);
 	}
@@ -77,7 +81,7 @@ public class Reversi {
 		    } catch (InterruptedException ex) {
 			Logger.getLogger(Reversi.class.getName()).log(Level.SEVERE, null, ex);
 		    }
-		    gui.updateTiles(board);
+		    gui.updateTiles(board, curPlayer);
 		}
 	    }
 	}
@@ -90,14 +94,13 @@ public class Reversi {
 	System.out.println(s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins"));
 	System.out.println("White: " + s[0] + " | Black: " + s[1]);
 	if(SHOW_GUI){
+	    gui.winner(s[0] - s[1]);
 	    JOptionPane.showMessageDialog(null, (s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins")) + "\nWhite: " + s[0] + " | Black: " + s[1]);
 	}
-
     }
 
     public static void main(String[] args){
 	Reversi game = new Reversi(Tester.class, Tester.class);
-	if(SHOW_GUI) game.gui = Gui.init();
 	game.play();
     }
 }
