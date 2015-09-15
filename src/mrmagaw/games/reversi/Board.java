@@ -76,8 +76,10 @@ public class Board {
 	return board.and(COLOUR[white ? 0 : 1]).bitCount();
     }
 
-    public boolean isFull(){
-	return board.bitCount() == 64;
+    public boolean isDone(){
+	return board.bitCount() == 64 ||
+		score(false) == 0 || score(true) == 0 ||
+		(!canPlay(true) && !canPlay(false));
     }
 
     public boolean canPlay(boolean white){

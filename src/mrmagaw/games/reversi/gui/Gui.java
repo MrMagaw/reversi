@@ -59,9 +59,9 @@ public class Gui extends javax.swing.JFrame {
 	turnLabel.setText(white ? "White's Turn" : "Black's Turn");
 	this.repaint();
     }
-
-    public void winner(final int whiteMinBlack){
-	turnLabel.setText(whiteMinBlack > 0 ? "White wins!" : (whiteMinBlack == 0 ? "Tie!" : "Black wins!"));
+    //0=tie, 1=white, 2=black
+    public void winner(final int winner){
+	turnLabel.setText(winner == 1 ? "White wins!" : (winner == 0 ? "Tie!" : "Black wins!"));
     }
 
     /**

@@ -24,8 +24,9 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import static mrmagaw.games.reversi.Globals.*;
 import mrmagaw.games.reversi.gui.Gui;
+import mrmagaw.games.reversi.players.ReversiBeeMo;
 import mrmagaw.games.reversi.players.ReversiPlayer;
-import mrmagaw.games.reversi.players.Tester;
+import mrmagaw.games.reversi.players.RandomPlayer;
 
 /**
  *
@@ -36,6 +37,7 @@ public class Reversi {
     protected Board board;
     protected boolean curPlayer = true;
     protected Gui gui;
+    protected int winner = -1;
 
     public Reversi(Class<? extends ReversiPlayer> white, Class<? extends ReversiPlayer> black){
 	try {
@@ -56,9 +58,27 @@ public class Reversi {
 	}
     }
 
-    private void play(){
-	while(!board.isFull() && board.score(true) > 0 && board.score(false) > 0){
+    public Reversi(Class<? extends ReversiPlayer> white, Class<? extends ReversiPlayer> black, Gui gui){
+	try {
+	    //Randomize black and white?
+	    players[0] = white.newInstance();
+	    players[1] = black.newInstance();
 
+	    players[0].init(true);
+	    players[1].init(false);
+
+	    board = new Board();
+	    if(SHOW_GUI){
+		this.gui = gui;
+		gui.updateTiles(board, true);
+	    }
+	} catch (InstantiationException | IllegalAccessException ex) {
+	    Logger.getLogger(Reversi.class.getName()).log(Level.SEVERE, null, ex);
+	}
+    }
+
+    private void play(){
+	while(!board.isDone() && board.canPlay(curPlayer)){
 	    if(VERBOSE){
 		System.out.println("========");
 		System.out.println(curPlayer ? "WHITE" : "BLACK");
@@ -66,7 +86,6 @@ public class Reversi {
 		board.printBoard();
 		System.out.println("========");
 	    }
-
 
 	    int xy[] = players[curPlayer ? 0 : 1].getPlay(board.clone());
 	    if(xy == null || xy.length != 2){
@@ -91,16 +110,31 @@ public class Reversi {
 	    board.printBoard();
 	    System.out.println("========");
 	}
-	System.out.println(s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins"));
+	winner = s[0] > s[1] ? 1 : (s[0] == s[1] ? 0 : 2);
+	System.out.println(winner == 1 ? "White wins" : (winner == 0 ? "Tie!" : "Black wins"));
 	System.out.println("White: " + s[0] + " | Black: " + s[1]);
 	if(SHOW_GUI){
-	    gui.winner(s[0] - s[1]);
-	    JOptionPane.showMessageDialog(null, (s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins")) + "\nWhite: " + s[0] + " | Black: " + s[1]);
+	    gui.winner(winner);
+	    //JOptionPane.showMessageDialog(null, (winner == 1 ? "White wins" : (winner == 0 ? "Tie!" : "Black wins")) + "\nWhite: " + s[0] + " | Black: " + s[1]);
 	}
     }
 
     public static void main(String[] args){
-	Reversi game = new Reversi(Tester.class, Tester.class);
-	game.play();
+	int[] scores = new int[]{0, 0, 0};
+	int runs = 100;
+	Reversi game = new Reversi(ReversiBeeMo.class, RandomPlayer.class);
+	for(int i = runs - 1; i >= 0; --i){
+	    game = new Reversi(ReversiBeeMo.class, RandomPlayer.class, game.gui);
+	    game.play();
+	    ++scores[game.winner];
+	    if(i % 10 == 0)
+		System.out.println(String.format("%d/%d (%01.1f%%)", runs-i, runs, (((float)runs-i)/runs*100)));
+	}
+	System.out.println(String.format(
+		"Out of %d games\n%d (%f%%) tied\n%d (%f%%) BeeMo won\n%d (%01.1f%%) BeeMo lost",
+		runs,
+		scores[0], ((float)scores[0]/runs*100),
+		scores[1], ((float)scores[1]/runs*100),
+		scores[2], ((float)scores[2]/runs*100)));
     }
 }

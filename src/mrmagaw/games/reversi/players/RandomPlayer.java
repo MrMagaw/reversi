@@ -25,7 +25,7 @@ import mrmagaw.games.reversi.Board;
  *
  * @author MrMagaw <MrMagaw@gmail.com>
  */
-public class Tester implements ReversiPlayer{
+public class RandomPlayer implements ReversiPlayer{
     private  String name;
     private boolean colour;
 
