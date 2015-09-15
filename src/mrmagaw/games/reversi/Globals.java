@@ -22,5 +22,6 @@ package mrmagaw.games.reversi;
  */
 public class Globals {
     public static final boolean
-	    DEBUG = true;
+	    DEBUG = false,
+	    VERBOSE = false;
 }

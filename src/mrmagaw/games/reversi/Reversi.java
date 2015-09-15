@@ -17,8 +17,13 @@
 package mrmagaw.games.reversi;
 
 import static java.lang.Thread.sleep;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import static mrmagaw.games.reversi.Globals.*;
+import mrmagaw.games.reversi.gui.Gui;
 import mrmagaw.games.reversi.players.ReversiPlayer;
 import mrmagaw.games.reversi.players.Tester;
 
@@ -49,12 +54,13 @@ public class Reversi {
     private void play(){
 	while(!board.isFull() && board.score(true) > 0 && board.score(false) > 0){
 
-
-	    System.out.println("========");
-	    System.out.println(curPlayer ? "WHITE" : "BLACK");
-	    System.out.println("========");
-	    board.printBoard();
-	    System.out.println("========");
+	    if(VERBOSE){
+		System.out.println("========");
+		System.out.println(curPlayer ? "WHITE" : "BLACK");
+		System.out.println("========");
+		board.printBoard();
+		System.out.println("========");
+	    }
 
 
 	    int xy[] = players[curPlayer ? 0 : 1].getPlay(board.clone());
@@ -64,21 +70,16 @@ public class Reversi {
 	    }
 	    if(board.play(xy[0], xy[1], curPlayer)){
 		curPlayer = board.canPlay(!curPlayer) ? !curPlayer : curPlayer;
-		try {
-		    //(new Scanner(System.in)).nextLine();
-		    sleep(1000);
-		} catch (InterruptedException ex) {
-		    Logger.getLogger(Reversi.class.getName()).log(Level.SEVERE, null, ex);
-		}
 	    }
 	}
 	int[] s = new int[]{board.score(true), board.score(false)};
-	System.out.println("\n\n\n\n========");
-	board.printBoard();
-	System.out.println("========");
+	if(VERBOSE){
+	    System.out.println("\n\n\n\n========");
+	    board.printBoard();
+	    System.out.println("========");
+	}
 	System.out.println(s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins"));
 	System.out.println("White: " + s[0] + " | Black: " + s[1]);
-	System.out.println("========");
     }
 
     public static void main(String[] args){
