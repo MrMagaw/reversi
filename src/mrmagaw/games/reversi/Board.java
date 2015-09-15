@@ -17,6 +17,7 @@
 package mrmagaw.games.reversi;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import static mrmagaw.games.reversi.Globals.*;
 
 /**
@@ -57,6 +58,12 @@ public class Board {
 	    ).reverse());
     }
 
+    //0=empty, 1=White, 2=Black
+    public int getPos(int x, int y){
+	int pos = (x << 1) + (y << 4);
+	return board.testBit(pos) ? 1 : (board.testBit(pos + 1) ? 2 : 0);
+    }
+
     public void printBoard(){
 	Board.printBoard(board);
     }
@@ -78,23 +85,32 @@ public class Board {
 	    //Filter out any occupied slots
 	    while(board.testBit(bitPos) || board.testBit(bitPos + 1))
 		bitPos += 2;
+	    if(bitPos >= 128)
+		break;
+	    int y = bitPos >> 4;
+	    int x = (bitPos >> 1) - (y << 3);
 
 	    //8 driections to search.
-	    //2, 4 | 3, 5 | 4, 2 | 5, 3
 	    for(int i = 7; i >= 0; --i){
 		int curPos = bitPos + Board.flipOffsets[i];
 
 		if(curPos < 0 || curPos >= 128 || !board.testBit(curPos + (white ? 1 : 0))) continue;
 
-		boolean breakout = false;
 		do{
+		    {//Stop rows from being indifferent
+			int curY = curPos >> 4;
+			int curX = (curPos >> 1) - (curY << 3);
+			if((i == 3 || i == 4) && (curY != y)) break;
+			if((i == 0 || i == 5) && (curX > x)) break;
+			if((i == 2 || i == 7) && (curX < x)) break;
+		    }
+
 		    if(board.testBit(curPos + (white ? 0 : 1))){
 			return true;
 		    }else if(!board.testBit(curPos + (white ? 1 : 0)))
 			break;
 		    curPos += Board.flipOffsets[i]; //Next
 		}while(curPos >= 0 && curPos < 128);
-		if(breakout) break;
 	    }
 	}
 	return false;
