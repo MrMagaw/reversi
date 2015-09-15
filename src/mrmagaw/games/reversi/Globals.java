@@ -23,5 +23,8 @@ package mrmagaw.games.reversi;
 public class Globals {
     public static final boolean
 	    DEBUG = false,
-	    VERBOSE = false;
+	    VERBOSE = false,
+	    SHOW_GUI = true;
+    public static final int
+	    DELAY = 100;
 }

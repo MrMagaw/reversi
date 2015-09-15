@@ -35,6 +35,7 @@ public class Reversi {
     protected final ReversiPlayer[] players = new ReversiPlayer[2];
     protected Board board;
     protected boolean curPlayer = true;
+    protected Gui gui;
 
     public Reversi(Class<? extends ReversiPlayer> white, Class<? extends ReversiPlayer> black){
 	try {
@@ -70,6 +71,14 @@ public class Reversi {
 	    }
 	    if(board.play(xy[0], xy[1], curPlayer)){
 		curPlayer = board.canPlay(!curPlayer) ? !curPlayer : curPlayer;
+		if(SHOW_GUI){
+		    try {
+			sleep(DELAY);
+		    } catch (InterruptedException ex) {
+			Logger.getLogger(Reversi.class.getName()).log(Level.SEVERE, null, ex);
+		    }
+		    gui.updateTiles(board);
+		}
 	    }
 	}
 	int[] s = new int[]{board.score(true), board.score(false)};
@@ -80,10 +89,15 @@ public class Reversi {
 	}
 	System.out.println(s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins"));
 	System.out.println("White: " + s[0] + " | Black: " + s[1]);
+	if(SHOW_GUI){
+	    JOptionPane.showMessageDialog(null, (s[0] > s[1] ? "White wins" : (s[0] == s[1] ? "Tie!" : "Black wins")) + "\nWhite: " + s[0] + " | Black: " + s[1]);
+	}
+
     }
 
     public static void main(String[] args){
 	Reversi game = new Reversi(Tester.class, Tester.class);
+	if(SHOW_GUI) game.gui = Gui.init();
 	game.play();
     }
 }
