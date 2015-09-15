@@ -116,6 +116,48 @@ public class Board {
 	return false;
     }
 
+    public ArrayList<Integer[]> getPlays(boolean white){
+	ArrayList<Integer[]> plays = new ArrayList();
+
+	for(int bitPos = 0; bitPos < 128; bitPos += 2){
+	    //Filter out any occupied slots
+	    while(board.testBit(bitPos) || board.testBit(bitPos + 1))
+		bitPos += 2;
+	    if(bitPos >= 128)
+		break;
+
+	    int y = bitPos >> 4;
+	    int x = (bitPos >> 1) - (y << 3);
+
+	    //8 driections to search.
+	    for(int i = 7; i >= 0; --i){
+		int curPos = bitPos + Board.flipOffsets[i];
+
+		if(curPos < 0 || curPos >= 128 || !board.testBit(curPos + (white ? 1 : 0))) continue;
+
+		do{
+
+		    {//Stop rows from being indifferent
+			int curY = curPos >> 4;
+			int curX = (curPos >> 1) - (curY << 3);
+			if((i == 3 || i == 4) && (curY != y)) break;
+			if((i == 0 || i == 5) && (curX > x)) break;
+			if((i == 2 || i == 7) && (curX < x)) break;
+		    }
+
+		    if(board.testBit(curPos + (white ? 0 : 1))){
+			int cy = bitPos >> 4;
+			plays.add(new Integer[]{(bitPos >> 1) - (cy << 3), cy});
+			break;
+		    }else if(!board.testBit(curPos + (white ? 1 : 0)))
+			break;
+		    curPos += Board.flipOffsets[i]; //Next
+		}while(curPos >= 0 && curPos < 128);
+	    }
+	}
+	return plays;
+    }
+
     public boolean play(int x, int y, boolean white){
 	return play(x, y, white, false);
     }
