@@ -1,8 +1,6 @@
 package mrmagaw.ai.beemo.algorithm;
 
-import java.math.BigInteger;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.math.BigDecimal;
 import mrmagaw.ai.beemo.AbstractBeeMo;
 
 public class IIMC<Game, Move, Pattern> extends Algorithm<Game, Move, Pattern>{
@@ -11,13 +9,13 @@ public class IIMC<Game, Move, Pattern> extends Algorithm<Game, Move, Pattern>{
     @Override
     public Move search(final Game game){
 	Move bestMove = null;
-	BigInteger bestScore = BigInteger.valueOf(Long.MIN_VALUE);
+	BigDecimal bestScore = BigDecimal.valueOf(Long.MIN_VALUE);
 
         for(Move move : overlord.getMoves(game)){
             Game newGame = overlord.tryMove(game, move);
 
             //SIMULATE Games
-            BigInteger score = overlord.simulate(newGame);
+            BigDecimal score = overlord.simulate(newGame);
 
             if(score.compareTo(bestScore) > 0){
                 bestScore = score;
