@@ -17,6 +17,7 @@
 package mrmagaw.games.reversi.players;
 
 import mrmagaw.games.reversi.Board;
+import mrmagaw.games.reversi.gui.Gui;
 
 /**
  *
@@ -24,7 +25,7 @@ import mrmagaw.games.reversi.Board;
  */
 public interface ReversiPlayer {
     //Will be called on a new game; true = white, false = black.
-    public void init(boolean white);
+    public void init(boolean white, Gui gui);
     public int[] getPlay(Board b);
     public String getName();
 }

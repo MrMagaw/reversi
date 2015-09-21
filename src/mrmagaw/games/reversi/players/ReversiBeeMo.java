@@ -16,11 +16,13 @@
  */
 package mrmagaw.games.reversi.players;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import mrmagaw.ai.beemo.AbstractBeeMo;
 import mrmagaw.ai.beemo.algorithm.*;
 import mrmagaw.games.reversi.Board;
+import mrmagaw.games.reversi.gui.Gui;
 
 /**
  *
@@ -28,7 +30,6 @@ import mrmagaw.games.reversi.Board;
  */
 public class ReversiBeeMo extends AbstractBeeMo<Board, Integer[], BigInteger> implements ReversiPlayer {
     private boolean white;
-    private Algorithm<Board, Integer[], BigInteger> algo;
 
     private ReversiBeeMo evilMo;
 
@@ -37,16 +38,27 @@ public class ReversiBeeMo extends AbstractBeeMo<Board, Integer[], BigInteger> im
     }
 
     private ReversiBeeMo(final boolean white){
-	super();
+	this();
 	this.white = white;
-	algo = new OBF(this);
     }
 
     @Override
-    public void init(final boolean white) {
+    public void init(final boolean white, Gui gui) {
+	init(white, gui, null);
+    }
+
+    public void init(final boolean white, Gui gui, ReversiBeeMo evilMo) {
 	this.white = white;
-	algo = new IIMC(this);
-	evilMo = new ReversiBeeMo(!white);
+	if(evilMo == null){
+	    this.evilMo = new ReversiBeeMo();
+	    this.evilMo.init(!white, gui, this);
+	    algo = new IIMC(this);
+	    sim = new Simulator(this, new OBF(this));
+	}else{
+	    this.evilMo = evilMo;
+	    algo = new IIMC(this);
+	    sim = new Simulator(this, new OBF(this));
+	}
     }
 
     @Override
@@ -60,14 +72,6 @@ public class ReversiBeeMo extends AbstractBeeMo<Board, Integer[], BigInteger> im
 
     @Override
     public Board tryMove(final Board game, final Integer[] move) {
-	/*
-	This should be removed...
-	*/
-	if(move == null){
-	    //Find out why we are getting null moves!
-	    return game;
-	}
-
 	Board b = game.clone();
 	b.play(move[0], move[1], white, true);
 	return b;
@@ -75,9 +79,9 @@ public class ReversiBeeMo extends AbstractBeeMo<Board, Integer[], BigInteger> im
 
 
     @Override
-    public BigInteger scoreGame(final Board game) {
+    public BigDecimal scoreGame(final Board game) {
 	//I should improve this.
-	return BigInteger.valueOf(game.score(white) - game.score(!white));
+	return BigDecimal.valueOf((long)game.score(white)/game.score(!white));
     }
 
     @Override

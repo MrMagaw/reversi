@@ -24,9 +24,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import static mrmagaw.games.reversi.Globals.*;
 import mrmagaw.games.reversi.gui.Gui;
-import mrmagaw.games.reversi.players.ReversiBeeMo;
-import mrmagaw.games.reversi.players.ReversiPlayer;
-import mrmagaw.games.reversi.players.RandomPlayer;
+import mrmagaw.games.reversi.players.*;
 
 /**
  *
@@ -45,8 +43,8 @@ public class Reversi {
 	    players[0] = white.newInstance();
 	    players[1] = black.newInstance();
 
-	    players[0].init(true);
-	    players[1].init(false);
+	    players[0].init(true, gui);
+	    players[1].init(false, gui);
 
 	    board = new Board();
 	    if(SHOW_GUI){
@@ -64,8 +62,8 @@ public class Reversi {
 	    players[0] = white.newInstance();
 	    players[1] = black.newInstance();
 
-	    players[0].init(true);
-	    players[1].init(false);
+	    players[0].init(true, gui);
+	    players[1].init(false, gui);
 
 	    board = new Board();
 	    if(SHOW_GUI){
@@ -115,23 +113,23 @@ public class Reversi {
 	System.out.println("White: " + s[0] + " | Black: " + s[1]);
 	if(SHOW_GUI){
 	    gui.winner(winner);
-	    //JOptionPane.showMessageDialog(null, (winner == 1 ? "White wins" : (winner == 0 ? "Tie!" : "Black wins")) + "\nWhite: " + s[0] + " | Black: " + s[1]);
+	    JOptionPane.showMessageDialog(null, (winner == 1 ? "White wins" : (winner == 0 ? "Tie!" : "Black wins")) + "\nWhite: " + s[0] + " | Black: " + s[1]);
 	}
     }
 
     public static void main(String[] args){
 	int[] scores = new int[]{0, 0, 0};
-	int runs = 100;
-	Reversi game = new Reversi(ReversiBeeMo.class, RandomPlayer.class);
+	int runs = 1;
+	Reversi game = new Reversi(RandomPlayer.class, RandomPlayer.class);
 	for(int i = runs - 1; i >= 0; --i){
-	    game = new Reversi(ReversiBeeMo.class, RandomPlayer.class, game.gui);
+	    game = new Reversi(HumanPlayer.class, ReversiBeeMo.class, game.gui);
 	    game.play();
 	    ++scores[game.winner];
 	    if(i % 10 == 0)
 		System.out.println(String.format("%d/%d (%01.1f%%)", runs-i, runs, (((float)runs-i)/runs*100)));
 	}
 	System.out.println(String.format(
-		"Out of %d games\n%d (%f%%) tied\n%d (%f%%) BeeMo won\n%d (%01.1f%%) BeeMo lost",
+		"Out of %d games\n%d (%f%%) tied\n%d (%f%%) White won\n%d (%01.1f%%) Black won",
 		runs,
 		scores[0], ((float)scores[0]/runs*100),
 		scores[1], ((float)scores[1]/runs*100),

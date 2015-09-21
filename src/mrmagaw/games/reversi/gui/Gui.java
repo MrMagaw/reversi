@@ -19,6 +19,8 @@ package mrmagaw.games.reversi.gui;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.math.BigInteger;
 import mrmagaw.games.reversi.Board;
 
@@ -27,8 +29,24 @@ import mrmagaw.games.reversi.Board;
  * @author MrMagaw <MrMagaw@gmail.com>
  */
 public class Gui extends javax.swing.JFrame {
-
     private Tile[][] tileArray = new Tile[8][8];
+    private int[] lastClick = null;
+
+    private final MouseListener clicker = new MouseListener(){
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	    Tile t = ((Tile)e.getComponent());
+	    lastClick = new int[]{t.x, t.y};
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {}
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+	@Override
+	public void mouseEntered(MouseEvent e) {}
+	@Override
+	public void mouseExited(MouseEvent e) {}
+    };
     /**
      * Creates new form Gui
      */
@@ -39,11 +57,20 @@ public class Gui extends javax.swing.JFrame {
 	g.setRows(8);
 	for(int y = 0; y < 8; ++y){
 	    for(int x = 0; x < 8; ++x){
-		tileArray[x][y] = new Tile();
+		tileArray[x][y] = new Tile(x, y);
 		jPanel1.add(tileArray[x][y]);
 		g.addLayoutComponent("" + x + y, tileArray[x][y]);
+		tileArray[x][y].addMouseListener(clicker);
 	    }
 	}
+    }
+
+    public int[] getLastTile(){
+	return lastClick;
+    }
+
+    public void clearLastTile(){
+	lastClick = null;
     }
 
     public void updateTiles(final Board b, final boolean white){

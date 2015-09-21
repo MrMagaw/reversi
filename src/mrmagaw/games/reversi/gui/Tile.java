@@ -29,6 +29,7 @@ import java.awt.geom.Ellipse2D;
 public class Tile extends javax.swing.JPanel {
 
     public int colour = 0; //0 = empty, 1 = white, 2 = black
+    public final int x, y;
     private static final Color[] PALETTE = new Color[]{
 	new Color(31, 108, 28),
 	new Color(255, 255, 255),
@@ -37,7 +38,9 @@ public class Tile extends javax.swing.JPanel {
     /**
      * Creates new form Tile
      */
-    public Tile() {
+    public Tile(int x, int y) {
+	this.x = x;
+	this.y = y;
 	initComponents();
     }
 

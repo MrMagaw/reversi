@@ -16,9 +16,8 @@
  */
 package mrmagaw.games.reversi.players;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mrmagaw.games.reversi.Board;
 import mrmagaw.games.reversi.gui.Gui;
 
@@ -26,30 +25,33 @@ import mrmagaw.games.reversi.gui.Gui;
  *
  * @author MrMagaw <MrMagaw@gmail.com>
  */
-public class RandomPlayer implements ReversiPlayer{
-    private  String name;
-    private boolean colour;
+public class HumanPlayer implements ReversiPlayer{
+    private boolean white;
+    private Gui gui;
 
-    private final Random rand = new Random();
-
-
-
-	@Override
-	public void init(boolean white, Gui gui) {
-	    colour = white;
-	    name = white ? "White_Tester" : "Black_Tester";
-	}
-
-	@Override
-	public int[] getPlay(Board b) {
-	    ArrayList<Integer[]> plays = b.getPlays(colour);
-	    int index = rand.nextInt(plays.size());
-	    return new int[]{plays.get(index)[0], plays.get(index)[1]};
-	}
-
-	@Override
-	public String getName() {
-	    return name;
-	}
-
+    @Override
+    public void init(boolean white, Gui gui) {
+	this.white = white;
+	this.gui = gui;
     }
+
+    @Override
+    public int[] getPlay(Board b) {
+	gui.clearLastTile();
+	int[] resp = null;
+	while((resp = gui.getLastTile()) == null){
+	    try {
+		Thread.sleep(50);
+	    } catch (InterruptedException ex) {
+		Logger.getLogger(HumanPlayer.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+	}
+	return resp;
+    }
+
+    @Override
+    public String getName() {
+	return "Some Guy Infront of the Keyboard";
+    }
+
+}
